@@ -24,18 +24,38 @@ var Controller = {
         });
     },
     photosRoute: function() {
-        Model.getPhotos().then(function(photos) {
-            console.log(photos);
-            // console.log('done');
+        var photos = [],
+            comments = [];
 
-            // Model.getPhotosComments().then(function(comments) {
-            //     console.log(comments);
-            // });
+        return Model.getPhotos().then(function(response) {
+            return new Promise(function(resolve, reject) {
+                photos = response.filter(function(item) {
+                    return typeof item === 'object';
+                });
+
+                resolve();
+            });
+        }).then(function() {
+            return new Promise(function(resolve, reject) {
+                Model.getPhotosComments().then(function(response) {
+                    comments = response.filter(function(item) {
+                        return typeof item === 'object';
+                    });
+
+                    resolve();
+                });
+            });
+        }).then(function() {
+            photos.forEach(function(item, index, arr) {
+                var id = item.id,
+                    itemComments = comments.filter(function(item) {
+                        return item.pid === id;
+                    });
+
+                item.commentsCount = itemComments.length;
+            });
+
+            results.innerHTML = View.render('photos', {list: photos});
         });
-        // return Model.getPhotos().then(function(photos) {
-        //     console.log(photos);
-        //
-        //     // results.innerHTML = View.render('news', {list: news.items});
-        // });
     }
 };

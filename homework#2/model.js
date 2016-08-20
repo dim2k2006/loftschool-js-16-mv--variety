@@ -42,32 +42,33 @@ var Model = {
     },
     getPhotos: function() {
         var self = this,
-            timer = '',
             query = '',
             offset = 0,
             photos = [];
 
         return new Promise(function(resolve, reject) {
-
-            timer = setInterval(function() {
+            query = function() {
                 self.getPhotosQuery(offset).then(function(response) {
 
                     if (response.length !== 0) {
 
                         photos = photos.concat(response);
+                        offset = offset + 5000;
+
+                        setTimeout(function() {
+                            query();
+                        }, 333);
 
                     } else {
-                        
-                        clearTimeout(timer);
+
                         resolve(photos);
 
                     }
                 });
+            };
 
-                offset = offset + 5000;
-            }, 333);
+            query();
         });
-
     },
     getPhotosQuery: function(offset) {
         var code = `var offset = ${offset},
@@ -91,7 +92,37 @@ var Model = {
         return this.callApi('execute', {code: code});
     },
     getPhotosComments: function() {
-        var code = `var offset = 0,
+        var self = this,
+            query = '',
+            offset = 0,
+            comments = [];
+
+        return new Promise(function(resolve, reject) {
+            query = function() {
+                self.getPhotosCommentsQuery(offset).then(function(response) {
+
+                    if (response.length !== 0) {
+
+                        comments = comments.concat(response);
+                        offset = offset + 2500;
+
+                        setTimeout(function() {
+                            query();
+                        }, 333);
+
+                    } else {
+
+                        resolve(comments);
+
+                    }
+                });
+            };
+
+            query();
+        });
+    },
+    getPhotosCommentsQuery: function(offset) {
+        var code = `var offset = ${offset},
                         comments = [],
                         query = 0;
                     

@@ -92,5 +92,21 @@
         {{/each}}
     </div>
 </script>
+
+<script type="text/x-handlebars-template" id="photosTemplate">
+    <div class="photos">
+        {{#each list}}
+        <div class="photos">
+            <div class="photos__preview">
+                <img src="{{photo_130}}">
+            </div>
+            <div class="photos__likes">Лайков: {{likes.count}}</div>
+            <div class="photos__reposts">Репостов: {{reposts.count}}</div>
+            <div class="photos__comments">Комментариев: {{commentsCount}}</div>
+        </div>
+        <hr>
+        {{/each}}
+    </div>
+</script>
 </body>
 </html>

@@ -22,6 +22,7 @@
         <button type="button" class="btn btn-default" onclick="Router.handle('music')">Музыка</button>
         <button type="button" class="btn btn-default" onclick="Router.handle('friends')">Друзья</button>
         <button type="button" class="btn btn-default" onclick="Router.handle('news')">Новости</button>
+        <button type="button" class="btn btn-default" onclick="Router.handle('groups')">Группы</button>
     </div>
     <hr>
     <div id="results"></div>
@@ -73,6 +74,20 @@
         </div>
         <hr>
         {{/if}}
+        {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="groupsTemplate">
+    <div class="groups">
+        {{#each list}}
+            <div class="group">
+                <div class="group__preview">
+                    <img src="{{photo_100}}">
+                </div>
+                <div class="group__name">{{name}}</div>
+            </div>
+            <hr>
         {{/each}}
     </div>
 </script>

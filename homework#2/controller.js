@@ -26,10 +26,11 @@ var Controller = {
     photosRoute: function() {
         Model.getPhotos().then(function(photos) {
             console.log(photos);
+            // console.log('done');
 
-            Model.getPhotosComments().then(function(comments) {
-                console.log(comments);
-            });
+            // Model.getPhotosComments().then(function(comments) {
+            //     console.log(comments);
+            // });
         });
         // return Model.getPhotos().then(function(photos) {
         //     console.log(photos);

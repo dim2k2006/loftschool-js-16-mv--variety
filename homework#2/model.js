@@ -41,14 +41,48 @@ var Model = {
         return this.callApi('groups.get', {extended: 1, fields: 'photo_100, name'});
     },
     getPhotos: function() {
-        var code = `var offset = 0;
-                    var photos = API.photos.getAll({"extended": 1, "count": 200, "offset": offset, "v": 5.53}).items;
-                    
-                    offset = offset + 200;
+        var self = this,
+            timer = '',
+            query = '',
+            offset = 0,
+            photos = [];
+
+        return new Promise(function(resolve, reject) {
+
+            timer = setInterval(function() {
+                self.getPhotosQuery(offset).then(function(response) {
+
+                    if (response.length !== 0) {
+
+                        photos = photos.concat(response);
+
+                    } else {
+                        
+                        clearTimeout(timer);
+                        resolve(photos);
+
+                    }
+                });
+
+                offset = offset + 5000;
+            }, 333);
+        });
+
+    },
+    getPhotosQuery: function(offset) {
+        var code = `var offset = ${offset},
+                        photos = [],
+                        query = 0;
                     
                     while (offset < 5000) {
-                        photos = photos + API.photos.getAll({"extended": 1, "count": 200, "offset": offset, "v": 5.53}).items;
-                        offset = offset + 200;
+                        query = API.photos.getAll({"extended": 1, "count": 200, "offset": offset, "v": 5.53}).items;
+                        
+                        if (query) {
+                            photos = photos + query;
+                            offset = offset + 200;
+                        } else {
+                            return photos;
+                        }
                     }
                     
                     return photos;
@@ -57,8 +91,24 @@ var Model = {
         return this.callApi('execute', {code: code});
     },
     getPhotosComments: function() {
-        
+        var code = `var offset = 0,
+                        comments = [],
+                        query = 0;
+                    
+                    while (offset < 2500) {
+                        query = API.photos.getAllComments({"extended": 1, "count": 100, "offset": offset, "v": 5.53}).items;
+                        
+                        if (query) {
+                            comments = comments + query;
+                            offset = offset + 100;
+                        } else {
+                            return comments;
+                        }
+                    }
+                    
+                    return comments;
+                `;
 
-        return this.callApi('photos.getAllComments', {extended: 1, 'v': 5.53});
+        return this.callApi('execute', {code: code});
     }
 };

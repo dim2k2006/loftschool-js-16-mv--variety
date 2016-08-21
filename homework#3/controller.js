@@ -54,7 +54,14 @@ var Controller = {
                             return item.pid === id;
                         });
 
-                    item.commentsCount = itemComments.length;
+                    if (itemComments.length === 0) {
+                        item.commentsCount = 0;
+                        item.commentsError = 'К этому фото нет комментариев.';
+                    } else {
+                        item.commentsCount = itemComments.length;
+                        item.commentsError = '';
+                    }
+                    
                     item.commentsInfo = itemComments.reverse();
 
                     resolve();
@@ -94,7 +101,7 @@ var Controller = {
                      });
                  });
             });
-            
+
             results.innerHTML = View.render('photos', {list: photos});
         });
     }

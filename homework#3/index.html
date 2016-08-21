@@ -12,6 +12,19 @@
             float: left;
             margin: 15px;
         }
+
+        .photos__comments__list {
+            padding-left: 100px;
+        }
+
+        .photos__comments__item__preview {
+            width: 50px;
+            height: 50px;
+        }
+
+        .photos__comments__item__preview img {
+            max-width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -110,13 +123,13 @@
                 {{#each commentsInfo}}
                     <div class="photos__comments__item">
                         <div class="photos__comments__item__preview">
-
+                            <img src="{{authorPhoto}}">
                         </div>
                         <div class="photos__comments__item__name">
-
+                            {{authorName}}
                         </div>
                         <div class="photos__comments__item__date">
-
+                            {{date}}
                         </div>
                         <div class="photos__comments__item__text">
                             <p>{{text}}</p>

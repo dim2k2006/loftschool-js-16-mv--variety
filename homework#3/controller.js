@@ -61,22 +61,41 @@ var Controller = {
                 });
             });
         }).then(function() {
-            var id = [];
+            return new Promise(function(resolve, reject) {
+                var id = [];
 
-            photos.forEach(function(item, index, arr) {
-                item.commentsInfo.forEach(function(commentItem, commentIndex, commentArr) {
-                    if (id.indexOf(commentItem.from_id) === -1) {
-                        id.push(commentItem.from_id);
-                    }
+                photos.forEach(function(item, index, arr) {
+                    item.commentsInfo.forEach(function(commentItem, commentIndex, commentArr) {
+                        if (id.indexOf(commentItem.from_id) === -1) {
+                            id.push(commentItem.from_id);
+                        }
+                    });
+                });
+
+                Model.getUsersAll(id, 'photo_100').then(function(response) {
+                    users = response;
+                    resolve();
                 });
             });
+        }).then(function() {
+            photos.forEach(function(item) {
+                 item.commentsInfo.forEach(function(commentItem) {
+                     var id = commentItem.from_id;
 
-            Model.getUsersAll(id, 'photo_100').then(function(response) {
-                console.log(response);
-            })
+                     users.forEach(function(userItem) {
+                         var userId = userItem.id;
+
+                         if (id === userId) {
+
+                             commentItem.authorPhoto = userItem.photo_100;
+                             commentItem.authorName = `${userItem.first_name} ${userItem.last_name}`;
+
+                         }
+                     });
+                 });
+            });
+            
+            results.innerHTML = View.render('photos', {list: photos});
         });
-
-
-        // results.innerHTML = View.render('photos', {list: photos});
     }
 };

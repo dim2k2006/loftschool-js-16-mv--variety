@@ -30,79 +30,65 @@ var Model = {
     },
     getUsersAll: function(id, fields) {
         var self = this,
+            idLength = id.length,
+            idSection = Math.ceil(idLength / 1000),
+            idOffset = 0,
             idArray = [],
             tmp = [],
             i = 0,
             query = '',
             offset = 0,
+            stringArray = [],
             users = [];
 
-        // id += `${commentItem.from_id}`;
-        // id = id.substring(0, id.length - 1);
-        id.forEach(function(item, index, arr) {
-            if (i > 1000) {
-                idArray.push(tmp);
-                tmp = [];
-                i = 0;
-            }
+        for (i; i < idSection; i++) {
 
-            tmp.push(item);
+            idArray.push(id.splice(idOffset, idOffset + 1000));
 
-            if (i === arr.length) {
-                idArray.push(tmp);
-            }
-
-            i++;
-        });
-
-        idArray.push(['1', '2', 3]);
+        }
 
         return new Promise(function(resolve, reject) {
-            console.log(idArray);
-            resolve();
-        });
+            query = function() {
+                if (idArray[offset]) {
 
-        // return new Promise(function(resolve, reject) {
-        //     query = function() {
-        //         self.getUsersAllQuery(offset).then(function(response) {
-        //
-        //             if (response.length !== 0) {
-        //
-        //                 users = users.concat(response);
-        //                 offset = offset + 1000;
-        //
-        //                 setTimeout(function() {
-        //                     query();
-        //                 }, 333);
-        //
-        //             } else {
-        //
-        //                 resolve(users);
-        //
-        //             }
-        //         });
-        //     };
-        //
-        //     query();
-        // });
-    },
-    getUsersAllQuery: function(offset) {
-        var code = `var offset = ${offset},
-                        photos = [],
-                        query = 0;
-                    
-                    while (offset < 5000) {
-                        query = API.users.get({"extended": 1, "count": 200, "offset": offset, "v": 5.53}).items;
-                        
-                        if (query) {
-                            photos = photos + query;
-                            offset = offset + 200;
+                    var string = idArray[offset].join(',');
+
+                    self.getUsersAllQuery(string).then(function(response) {
+                        if (response.length !== 0) {
+
+                            users = users.concat(response);
+                            offset = offset + 1;
+
+                            setTimeout(function() {
+                                query();
+                            }, 333);
+
                         } else {
-                            return photos;
+                            
+                            resolve(users);
+
                         }
-                    }
-                    
-                    return photos;
+                    });
+
+                } else {
+
+                    resolve(users);
+
+                }
+            };
+
+            query();
+        });
+    },
+    getUsersAllQuery: function(id) {
+        var code = `var users = [],
+                        query = 0;
+
+                    query = API.users.get({"user_ids": "${id}", "fields": "photo_100", "v": "5.53"});
+                        
+                    users = users + query;
+                            
+                    return users;
                 `;
 
         return this.callApi('execute', {code: code});
